@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#39245b">
+  <title>Мой питомец — Telegram Mini App</title>
+  <style>
+*{box-sizing:border-box} :root{--ink:#fff;--muted:#e6d9f2;--deep:#281a3e;--panel:#ffffff20;--pink:#ed79c6;--gold:#ffcf68}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 15%,#8b6bd3 0,#493477 38%,#251a3c 100%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);display:flex;justify-content:center}
+.game{width:min(100%,480px);min-height:100vh;padding:calc(12px + env(safe-area-inset-top)) 15px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:13px;overflow:hidden;position:relative}
+.topbar{display:flex;align-items:center;gap:8px}.currency{background:#21182d88;border:1px solid #ffffff30;border-radius:22px;padding:9px 12px;display:flex;gap:7px;align-items:center;flex:1;justify-content:center;font-size:17px}.round{border:0;border-radius:50%;width:43px;height:43px;background:#ffffff25;color:white;font-size:21px}
+.offer{border-radius:22px;background:linear-gradient(110deg,#9868e8,#e47bc9);padding:15px 17px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 8px 22px #160c2b44}.offer small{font-weight:900;letter-spacing:1px}.offer h2{font-size:20px;margin:5px 0}.offer p{font-size:12px;margin:0;color:#fff0fa}.offer-art{font-size:39px;white-space:nowrap}
+.scene{position:relative;min-height:390px;flex:1;border-radius:25px;overflow:hidden;background:linear-gradient(#8bd4ef 0%,#c7e9bc 48%,#d9a25d 49%,#b66b38 100%);box-shadow:inset 0 -30px 50px #63351c55;display:flex;align-items:center;justify-content:center}
+.scene-label{position:absolute;top:14px;left:15px;background:#ffffff55;color:#523b69;padding:6px 10px;border-radius:20px;font-size:10px;font-weight:900;letter-spacing:1px;z-index:2}
+.cloud{position:absolute;width:100px;height:30px;background:#ffffff70;border-radius:50px;filter:blur(1px)}.cloud:after,.cloud:before{content:"";position:absolute;background:inherit;border-radius:50%}.cloud:before{width:40px;height:40px;left:20px;top:-18px}.cloud:after{width:48px;height:48px;right:15px;top:-22px}.cloud-one{top:55px;left:10%}.cloud-two{top:95px;right:-20px;transform:scale(.8)}
+.fence{position:absolute;left:0;right:0;top:48%;height:62px;border-top:9px solid #9b5b32;border-bottom:9px solid #9b5b32;background:repeating-linear-gradient(90deg,transparent 0 33px,#a96638 34px 43px,transparent 44px 72px);opacity:.9}
+.pet-wrap{z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:25px;text-shadow:0 2px 4px #563d51}.pet{font-size:clamp(115px,35vw,165px);line-height:1.2;filter:drop-shadow(0 12px 5px #4d2a3155);animation:bob 2.8s ease-in-out infinite}.pet-name{font-size:25px;font-weight:900;margin-top:-3px}.level{background:#e65dc0;border-radius:18px;padding:5px 14px;font-weight:900;margin-top:5px;font-size:13px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.ground{position:absolute;bottom:-38px;width:130%;height:105px;border-radius:50%;background:#bd7b37;border-top:9px solid #e5b64e;box-shadow:0 -5px 0 #9d5b2c}
+.status-card{position:absolute;bottom:12px;left:12px;right:12px;background:#25172bd9;border:1px solid #ffffff40;border-radius:17px;padding:12px 13px;z-index:2}.status-title{font-size:11px;font-weight:900;letter-spacing:.5px;margin-bottom:7px}.stat{display:grid;grid-template-columns:105px 1fr 23px;gap:7px;align-items:center;font-size:11px;margin:6px 0}.stat b{text-align:right}.bar{height:10px;background:#ffffff2b;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:#ff718e;border-radius:10px}.bar.energy i{background:#f4c34d}.bar.clean i{background:#64d8dd}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.action{border:1px solid #ffffff25;background:#ffffff20;color:white;border-radius:16px;padding:10px 3px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px}.action span{font-size:25px}.action:active,.nav-item:active{transform:scale(.96)}
+.task{display:flex;align-items:center;justify-content:space-between;background:#24172fc9;border:1px solid #ffffff25;border-radius:15px;padding:11px 13px}.task div:first-child{display:flex;flex-direction:column;gap:3px}.task small{font-size:11px;color:#d9cbe6}.task-reward{font-weight:900;color:#ffdf80;font-size:13px}
+.bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);background:#21172edb;border:1px solid #ffffff30;border-radius:19px;padding:7px 3px}.nav-item{border:0;background:transparent;color:#cbbdd8;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;padding:4px 0}.nav-item span{font-size:22px}.nav-item.active{color:#ff9be2;font-weight:900}
+.toast{position:absolute;left:50%;bottom:90px;transform:translate(-50%,15px);background:#20152eeF;padding:10px 16px;border-radius:20px;white-space:nowrap;opacity:0;pointer-events:none;transition:.2s;font-size:13px;z-index:5}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-height:850px){.scene{min-height:450px}}
+</style>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <main class="game">
+    <header class="topbar">
+      <div class="currency"><span>🌙</span><b id="gems">26</b></div>
+      <div class="currency"><span>🪙</span><b id="coins">250</b></div>
+      <div class="currency"><span>🍎</span><b id="food">12</b></div>
+      <button class="round" id="profileBtn" aria-label="Профиль">☰</button>
+    </header>
+
+    <section class="offer">
+      <div><small>СЕГОДНЯ В ИГРЕ</small><h2>Забота о питомце 💜</h2><p>Выполняй действия и получай опыт!</p></div>
+      <div class="offer-art">✨🐴✨</div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-label">ТВОЙ УЮТНЫЙ ДВОР</div>
+      <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
+      <div class="fence"></div>
+      <div class="pet-wrap">
+        <div class="pet" id="pet" aria-label="Твой питомец">🦄</div>
+        <div class="pet-name" id="petName">Искорка</div>
+        <div class="level" id="level">УРОВЕНЬ 1</div>
+      </div>
+      <div class="ground"></div>
+      <div class="status-card">
+        <div class="status-title">СОСТОЯНИЕ ПИТОМЦА</div>
+        <div class="stat"><span>❤️ Здоровье</span><div class="bar"><i id="healthBar" style="width:90%"></i></div><b id="healthText">90</b></div>
+        <div class="stat"><span>⚡ Энергия</span><div class="bar energy"><i id="energyBar" style="width:75%"></i></div><b id="energyText">75</b></div>
+        <div class="stat"><span>🧼 Чистота</span><div class="bar clean"><i id="cleanBar" style="width:80%"></i></div><b id="cleanText">80</b></div>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button class="action" data-action="feed"><span>🥕</span><b>Покормить</b></button>
+      <button class="action" data-action="wash"><span>🫧</span><b>Помыть</b></button>
+      <button class="action" data-action="play"><span>🎾</span><b>Поиграть</b></button>
+      <button class="action" data-action="sleep"><span>💤</span><b>Отдых</b></button>
+    </section>
+
+    <section class="task">
+      <div><b>🌟 Первые шаги</b><small id="taskText">Позаботься о своём питомце</small></div>
+      <div class="task-reward">+20 🪙</div>
+    </section>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="home"><span>🏡</span>Дом</button>
+      <button class="nav-item" data-tab="bag"><span>🎒</span>Рюкзак</button>
+      <button class="nav-item" data-tab="farm"><span>🌱</span>Ферма</button>
+      <button class="nav-item" data-tab="shop"><span>🛍️</span>Магазин</button>
+      <button class="nav-item" data-tab="tasks"><span>📜</span>Задания</button>
+    </nav>
+    <div class="toast" id="toast" role="status"></div>
+  </main>
+  <script>
+// Первая версия игровой логики. Пока прогресс хранится на этом устройстве.
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+const defaults = {coins:250,gems:26,food:12,health:90,energy:75,clean:80,xp:0,level:1,taskDone:false};
+let state = {...defaults, ...JSON.parse(localStorage.getItem("petopia_demo_save") || "{}")};
+const $ = id => document.getElementById(id);
+let toastTimer;
+
+function save(){ localStorage.setItem("petopia_demo_save", JSON.stringify(state)); }
+function render(){
+  $("coins").textContent=state.coins; $("gems").textContent=state.gems; $("food").textContent=state.food;
+  $("healthBar").style.width=state.health+"%"; $("energyBar").style.width=state.energy+"%"; $("cleanBar").style.width=state.clean+"%";
+  $("healthText").textContent=state.health; $("energyText").textContent=state.energy; $("cleanText").textContent=state.clean;
+  $("level").textContent="УРОВЕНЬ "+state.level;
+  $("taskText").textContent=state.taskDone?"Задание выполнено! Отличная работа 💜":"Позаботься о своём питомце";
+  save();
+}
+function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),1900)}
+function gainXP(amount){state.xp+=amount;if(state.xp>=100){state.xp-=100;state.level++;state.gems+=5;toast("Новый уровень! +5 🌙")} }
+function care(action){
+  if(action==="feed"){
+    if(state.food<1)return toast("Закончилась еда! Загляни в магазин.");
+    state.food--;state.health=Math.min(100,state.health+8);state.energy=Math.min(100,state.energy+4);toast("Ням-ням! Питомец доволен 🥕");
+  } else if(action==="wash"){
+    state.clean=Math.min(100,state.clean+25);toast("Теперь питомец чистенький! 🫧");
+  } else if(action==="play"){
+    if(state.energy<10)return toast("Питомцу нужен отдых 💜");
+    state.energy-=10;state.health=Math.min(100,state.health+2);state.coins+=8;gainXP(15);toast("Весёлая игра! +8 монет");
+  } else if(action==="sleep"){
+    state.energy=Math.min(100,state.energy+30);state.health=Math.min(100,state.health+5);toast("Сладких снов! Энергия восстановлена 💤");
+  }
+  if(!state.taskDone && (state.health>=95 || state.clean>=100)){state.taskDone=true;state.coins+=20;toast("Задание выполнено! +20 монет 🎉")}
+  render();
+}
+document.querySelectorAll("[data-action]").forEach(btn=>btn.addEventListener("click",()=>care(btn.dataset.action)));
+document.querySelectorAll("[data-tab]").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".nav-item").forEach(x=>x.classList.remove("active"));btn.classList.add("active");
+  const tab=btn.dataset.tab;
+  const messages={home:"Ты дома со своим питомцем 🏡",bag:"Рюкзак появится в следующем обновлении 🎒",farm:"Ферма появится в следующем обновлении 🌱",shop:"Магазин скоро откроется 🛍️",tasks:"Выполняй задания по уходу за питомцем 📜"};
+  toast(messages[tab]);
+}));
+$("profileBtn").addEventListener("click",()=>toast("Профиль игрока — скоро"));
+render();
+</script>
+</body>
+</html>
